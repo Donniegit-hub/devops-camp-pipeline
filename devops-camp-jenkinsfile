@@ -28,10 +28,7 @@ pipeline {
             steps {
                 echo "Building application image"
                 //TODO("Lab 4 - Artifact Management"): build the docker app image
-            }
-            //TODO("Lab 4 - Artifact Management"): clean local docker app image
-        }
-        withCredentials([usernameColonPassword(credentialsId: 'dlynch-harbor-auth', variable: 'HARBOR-AUTH')]) {
+                withCredentials([usernameColonPassword(credentialsId: 'dlynch-harbor-auth', variable: 'HARBOR-AUTH')]) {
                     script {
                         sh 'docker build -t $APP_IMAGE_NAME-$COMMIT_HASH -f ./app/Dockerfile ./afs-labs-student'
                         docker.withRegistry('https://$HARBOR_REGISTRY', 'dlynch-harbor-auth') {
@@ -40,6 +37,10 @@ pipeline {
                         }
                     }
                 }
+            }
+            //TODO("Lab 4 - Artifact Management"): clean local docker app image
+        }
+        
                 post {
                 always {
                     echo "Clean local $APP_IMAGE_NAME image"
