@@ -39,6 +39,7 @@ pipeline {
                 }
             }
             //TODO("Lab 4 - Artifact Management"): clean local docker app image
+          
         
         
                 post {
@@ -55,7 +56,14 @@ pipeline {
                 }
             }
         }
-        
+          stage('Security scanning') {
+            steps {
+                  withCredentials([usernamePassword(credentialsId: 'dlynch-harbor-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                      echo "Scanning $APP_IMAGE_NAME image"
+                      sh 'python harbor_scanner.py -i $APP_IMAGE_NAME -r $HARBOR_REGISTRY -p $HARBOR_PROJECT -c ${USERNAME}:${PASSWORD}'
+                  }
+            }
+        }
         //TODO("Lab 7 - Automated Security Scans"): add a stage
         stage('Deploy') {
             steps {
